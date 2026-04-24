@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Stadium</title>
+    <meta name="description" content="Kinetic Stadium - Smart Venue Dashboard">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="brand">
+            <h1><span class="material-symbols-outlined">bolt</span> KINETIC STADIUM</h1>
+        </div>
+        
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a class="nav-link active" data-target="view-dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-map">
+                    <span class="material-symbols-outlined">map</span>
+                    <span>Live Map</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-concessions">
+                    <span class="material-symbols-outlined">fastfood</span>
+                    <span>Express Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-feed">
+                    <span class="material-symbols-outlined">feed</span>
+                    <span>Fan Feed</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="ticket-stub">
+            <p class="text-muted" style="font-size: 0.8rem">YOUR TICKET</p>
+            <h3 class="mt-2">SEC 112 • ROW 14</h3>
+            <p style="font-size: 0.9rem" class="text-teal">Gate B</p>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Top App Bar -->
+        <header class="top-bar">
+            <div class="score-ticker" id="top-score-ticker">
+                <span class="live-badge">LIVE</span>
+                <span>KNT 84 - 76 AWY</span>
+                <span class="text-muted">| Q3 08:42</span>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <span class="material-symbols-outlined" style="cursor:pointer">notifications</span>
+                <span class="material-symbols-outlined" style="cursor:pointer">account_circle</span>
+            </div>
+        </header>
+
+        <!-- View: Dashboard -->
+        <section id="view-dashboard" class="view-section active">
+            <h2>Welcome back, Fan!</h2>
+            <p class="text-muted mb-4">Here's your live event overview.</p>
+            
+            <div class="bento-grid">
+                <!-- Ticket Card -->
+                <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+                    <h3 class="mb-4">Digital Ticket</h3>
+                    <div class="qr-container">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KineticStadiumTicket" alt="QR Code">
+                        <div class="qr-scanner"></div>
+                    </div>
+                    <p class="mt-4 text-muted">Ready for scanning</p>
+                </div>
+
+                <!-- Venue Pulse -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Venue Pulse <span class="material-symbols-outlined text-orange">sensors</span></h3>
+                    <div id="dashboard-crowd-stats">
+                        <p>Loading real-time crowd data...</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-map]').click()">
+                            Find my seat <span class="material-symbols-outlined">my_location</span>
+                        </button>
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-concessions]').click()">
+                            Order food <span class="material-symbols-outlined">restaurant</span>
+                        </button>
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-feed]').click()">
+                            View Replays <span class="material-symbols-outlined">replay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Live Map -->
+        <section id="view-map" class="view-section">
+            <h2 class="mb-4">Live Venue Map</h2>
+            
+            <div class="bento-grid" style="grid-template-columns: 1fr 2fr;">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4">Navigate</h3>
+                    <form id="route-form">
+                        <div class="mb-4">
+                            <label class="text-muted">From</label>
+                            <select id="origin" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; text-align: left;">
+                                <option value="Gate A">Gate A</option>
+                                <option value="Gate B">Gate B</option>
+                                <option value="Section 110">Section 110</option>
+                                <option value="Food Court">Food Court</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted">To</label>
+                            <select id="destination" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; text-align: left;">
+                                <option value="Section 110">Section 110</option>
+                                <option value="Food Court">Food Court</option>
+                                <option value="Restroom 1">Restroom 1</option>
+                                <option value="Gate A">Gate A</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted">Accessibility</label>
+                            <div style="margin-top: 0.5rem;">
+                                <input type="checkbox" id="accessible"> Require accessible route
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Find Fastest Route</button>
+                    </form>
+
+                    <div id="route-results" class="mt-4" style="display:none;">
+                        <h4 class="text-teal mb-2">Route Summary</h4>
+                        <p id="route-distance"></p>
+                        <p id="route-time"></p>
+                        <p id="route-reason" class="text-muted mt-2" style="font-size:0.9rem; border-left:2px solid var(--accent-orange); padding-left:10px;"></p>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; display:flex; justify-content:center; align-items:center; min-height: 400px;" id="map-container">
+                    <!-- SVG map injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Express Concessions -->
+        <section id="view-concessions" class="view-section">
+            <div class="flex-between mb-4">
+                <h2>Express Orders</h2>
+                <div class="glass-panel" style="padding: 0.5rem 1rem; color: var(--warning)">
+                    <span class="material-symbols-outlined" style="vertical-align: middle;">timer</span> 
+                    <span id="global-prep-time">Loading...</span>
+                </div>
+            </div>
+
+            <div class="bento-grid" style="grid-template-columns: 2fr 1fr;">
+                <div>
+                    <div id="menu-container">
+                        <!-- Menu items injected here via JS -->
+                        <p>Loading menu...</p>
+                    </div>
+                </div>
+                
+                <div class="glass-panel" style="padding: 1.5rem; position: sticky; top: 100px; height: fit-content;">
+                    <h3 class="mb-4">Your Cart</h3>
+                    <div id="cart-items" class="mb-4">
+                        <p class="text-muted">Cart is empty.</p>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-glass); padding-top: 1rem;" class="mb-4">
+                        <div class="flex-between"><span>Subtotal:</span> <span id="cart-subtotal">$0.00</span></div>
+                        <div class="flex-between text-muted"><span>Tax:</span> <span id="cart-tax">$0.00</span></div>
+                        <div class="flex-between mt-2"><strong style="font-size: 1.2rem">Total:</strong> <strong style="font-size: 1.2rem" id="cart-total" class="text-teal">$0.00</strong></div>
+                    </div>
+                    <button class="btn" style="width: 100%;" id="checkout-btn" disabled>Place Order</button>
+
+                    <div id="order-status-panel" class="mt-4" style="display:none; background: rgba(0,219,233,0.1); padding: 1rem; border-radius: 8px;">
+                        <h4 class="text-teal mb-2" id="order-status-title">Order Confirmed</h4>
+                        <h2 class="mb-2" id="order-pickup-code"></h2>
+                        <p id="order-status-msg" class="text-muted"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Fan Feed -->
+        <section id="view-feed" class="view-section">
+            <h2 class="mb-4">Fan Feed</h2>
+            <div class="bento-grid">
+                
+                <!-- Match Centre -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Match Centre <span class="live-badge">LIVE</span></h3>
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div class="flex-between" style="font-size: 2rem; font-family: var(--font-heading)">
+                            <span>KNT</span>
+                            <span class="text-orange" id="feed-score">84 - 76</span>
+                            <span>AWY</span>
+                        </div>
+                        <p class="text-muted" id="feed-clock">Q3 08:42</p>
+                    </div>
+                    <div id="feed-stats">
+                        <!-- Stats injected here -->
+                    </div>
+                </div>
+
+                <!-- Instant Replays -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Instant Replays <span class="material-symbols-outlined text-teal">slow_motion_video</span></h3>
+                    <div id="feed-replays" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Replays injected here -->
+                    </div>
+                </div>
+
+                <!-- Venue Buzz -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Venue Buzz <span class="material-symbols-outlined text-primary">chat_bubble</span></h3>
+                    <div id="feed-buzz" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Buzz injected here -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- AI Chat Widget -->
+    <div id="chat-widget" class="collapsed glass-panel">
+        <div id="chat-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="material-symbols-outlined">robot_2</span>
+                <span style="font-weight: bold; font-family: var(--font-heading)">Kinetic Assistant</span>
+            </div>
+            <span class="material-symbols-outlined" id="chat-toggle-icon">expand_less</span>
+        </div>
+        <div id="chat-messages">
+            <div class="chat-msg msg-bot">
+                Hello! I'm your Kinetic Stadium AI assistant. How can I help you today?
+            </div>
+        </div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Ask about the venue..." autocomplete="off">
+            <button class="btn" id="chat-send" style="padding: 5px 10px;"><span class="material-symbols-outlined">send</span></button>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

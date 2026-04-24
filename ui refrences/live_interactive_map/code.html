@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Map - Kinetic Stadium</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#0c0e11",
+                        "on-tertiary-container": "#e3fdff",
+                        "on-primary": "#002b75",
+                        "on-tertiary-fixed": "#002022",
+                        "secondary-fixed": "#ffdbce",
+                        "surface-bright": "#37393d",
+                        "surface-dim": "#111316",
+                        "surface-container-high": "#282a2d",
+                        "on-surface-variant": "#c2c6d8",
+                        "primary-fixed-dim": "#b3c5ff",
+                        "secondary-fixed-dim": "#ffb59a",
+                        "on-secondary-fixed-variant": "#802a00",
+                        "surface-tint": "#b3c5ff",
+                        "on-tertiary-fixed-variant": "#004f54",
+                        "surface-variant": "#333538",
+                        "outline-variant": "#424656",
+                        "on-tertiary": "#00363a",
+                        "primary-container": "#0066ff",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#2f3034",
+                        "surface-container": "#1e2023",
+                        "surface": "#111316",
+                        "surface-container-low": "#1a1c1f",
+                        "on-surface": "#e2e2e6",
+                        "primary-fixed": "#dae1ff",
+                        "on-primary-fixed-variant": "#003fa4",
+                        "primary": "#b3c5ff",
+                        "on-primary-fixed": "#001849",
+                        "background": "#111316",
+                        "secondary": "#ffb59a",
+                        "surface-container-highest": "#333538",
+                        "tertiary": "#00dbe9",
+                        "on-secondary-container": "#531900",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#e2e2e6",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "secondary-container": "#ff5e07",
+                        "outline": "#8c90a1",
+                        "tertiary-fixed": "#7df4ff",
+                        "tertiary-container": "#007e86",
+                        "tertiary-fixed-dim": "#00dbe9",
+                        "on-secondary": "#5a1b00",
+                        "on-background": "#e2e2e6",
+                        "inverse-primary": "#0054d6",
+                        "on-primary-container": "#f8f7ff",
+                        "on-secondary-fixed": "#370e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "unit": "4px",
+                        "margin": "20px",
+                        "stack-sm": "8px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Lexend"],
+                        "label-sm": ["Lexend"],
+                        "body-md": ["Lexend"],
+                        "body-lg": ["Lexend"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex">
+<!-- SideNavBar (Web) -->
+<nav class="hidden md:flex flex-col bg-[#121417] border-r border-white/5 backdrop-blur-2xl h-screen w-64 z-40">
+<div class="p-6">
+<h1 class="text-white font-black text-2xl mb-8 font-['Space_Grotesk'] italic tracking-tighter">KINETIC STADIUM</h1>
+<div class="mb-8 p-4 rounded-xl bg-surface-container-high/50 border border-white/5 backdrop-blur-md">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeVlclY3ijfxLJCGyS9e6RnBknlNlzMrFzQDBj61R29YRe0HaN-WTWAxgR8p6iyAXRmyHX9keO2pa3blwP6csvkfaNBTX2l1Yewlmq7txEHd0dGM8Om3sJXOcolz4MG9YGCg23EahW-6TZAhtkhFUuRQHlNcRuKfwq513P6FeCLXGlTEBM_ef8b8SOXpCK1KMKtyJ6bYfXVS5aTbBi_KNuXXACylujRoSVVyXLUuyNmzWSHfOkmx75CF5F5nIp_49XdCi5-_7ktG0i"/>
+</div>
+<div>
+<div class="font-data-mono text-data-mono text-white">Section 112, Row 14</div>
+<div class="font-label-sm text-label-sm text-outline">GUEST PASS</div>
+</div>
+</div>
+<button class="w-full py-2 bg-primary-container text-white font-data-mono text-data-mono rounded hover:bg-inverse-primary transition-colors">VIEW TICKET</button>
+</div>
+<ul class="space-y-2">
+<li>
+<a class="flex items-center gap-3 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-white border-l-4 border-[#0066FF] bg-gradient-to-r from-[#0066FF]/20 to-transparent py-3 px-6 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-r-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+                        Live Map
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">fastfood</span>
+                        Express Orders
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">rss_feed</span>
+                        Fan Feed
+                    </a>
+</li>
+</ul>
+</div>
+<div class="mt-auto p-6">
+<ul class="space-y-2">
+<li>
+<a class="flex items-center gap-3 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                        Settings
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
+                        Support
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative h-full">
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-6 py-4 bg-[#121417]/80 backdrop-blur-md border-b border-white/10 shadow-[0_0_15px_rgba(0,102,255,0.1)] absolute top-0 z-50">
+<div class="text-xl font-black text-white italic tracking-tighter font-['Space_Grotesk']">KINETIC STADIUM</div>
+<div class="flex gap-4">
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+</div>
+</header>
+<!-- Search & Wayfinding Overlay -->
+<div class="absolute top-20 md:top-6 left-6 right-6 md:left-8 md:right-auto md:w-96 z-30 flex flex-col gap-4 pointer-events-none">
+<!-- Search Bar -->
+<div class="bg-surface-container-highest/60 backdrop-blur-[20px] border border-white/15 rounded-xl p-2 pointer-events-auto shadow-lg">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+<input class="w-full bg-transparent border-none text-white font-body-md text-body-md pl-10 pr-4 py-2 focus:ring-1 focus:ring-primary-container rounded-lg placeholder-outline" placeholder="Search amenities, food, restrooms..." type="text"/>
+</div>
+</div>
+<!-- Wayfinding Card -->
+<div class="bg-surface-container-highest/60 backdrop-blur-[20px] border border-white/15 rounded-xl p-4 pointer-events-auto shadow-lg">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md text-white">Navigation</h2>
+<button class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-outline hover:text-white transition-colors border border-white/10">
+<span class="material-symbols-outlined text-sm">my_location</span>
+</button>
+</div>
+<div class="flex items-start gap-3 relative before:content-[''] before:absolute before:left-[11px] before:top-6 before:bottom-6 before:w-0.5 before:bg-outline-variant">
+<div class="flex flex-col items-center mt-1">
+<div class="w-6 h-6 rounded-full bg-primary-container/20 border-2 border-primary-container flex items-center justify-center z-10">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+</div>
+</div>
+<div class="flex-1 pb-4">
+<label class="font-label-sm text-label-sm text-outline uppercase block mb-1">Current Location</label>
+<div class="font-body-md text-body-md text-white">East Gate Entrance</div>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="flex flex-col items-center mt-1">
+<div class="w-6 h-6 rounded-full bg-secondary-container/20 border-2 border-secondary-container flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-secondary-container">location_on</span>
+</div>
+</div>
+<div class="flex-1">
+<label class="font-label-sm text-label-sm text-outline uppercase block mb-1">Destination</label>
+<div class="font-body-md text-body-md text-secondary">Section 112</div>
+</div>
+</div>
+<div class="mt-6 flex gap-3">
+<button class="flex-1 py-2 bg-primary-container text-white font-data-mono text-data-mono rounded hover:bg-inverse-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">directions_walk</span>
+                        FASTEST ROUTE
+                    </button>
+</div>
+</div>
+</div>
+<!-- Legend Overlay -->
+<div class="absolute bottom-24 md:bottom-6 left-6 z-30 pointer-events-none hidden sm:block">
+<div class="bg-surface-container-highest/60 backdrop-blur-[20px] border border-white/15 rounded-xl p-4 pointer-events-auto">
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-3">Crowd Density</h3>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-24 h-2 rounded-full bg-gradient-to-r from-primary-container via-tertiary-container to-secondary-container"></div>
+<span class="font-label-sm text-label-sm text-white">Low - High</span>
+</div>
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-3">Amenities</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-primary-container/20 border border-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-primary">wc</span>
+</div>
+<span class="font-label-sm text-label-sm text-white">Restrooms</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-tertiary-container/20 border border-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-tertiary">fastfood</span>
+</div>
+<span class="font-label-sm text-label-sm text-white">Food</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-secondary-container/20 border border-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-secondary">local_mall</span>
+</div>
+<span class="font-label-sm text-label-sm text-white">Merch</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-error-container/20 border border-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-error">medical_services</span>
+</div>
+<span class="font-label-sm text-label-sm text-white">First Aid</span>
+</div>
+</div>
+</div>
+</div>
+<!-- The Map Canvas (Simulated with an image and overlays) -->
+<div class="flex-1 w-full h-full relative overflow-hidden bg-surface-container-lowest">
+<!-- Simulated Stadium Map Background -->
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&amp;fit=crop&amp;w=2000&amp;q=80')] bg-cover bg-center opacity-40 mix-blend-luminosity" data-alt="blueprint style aerial view of a modern sports stadium with complex geometric seating arrangements and field lines in dark mode"></div>
+<!-- Grid Overlay -->
+<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+<!-- Heatmap Nodes (Simulated) -->
+<div class="absolute top-1/4 left-1/3 w-32 h-32 bg-secondary-container/30 rounded-full blur-2xl pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 w-48 h-48 bg-primary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute bottom-1/3 right-1/4 w-24 h-24 bg-tertiary-container/30 rounded-full blur-xl pointer-events-none"></div>
+<!-- Interactive Map Elements (SVG Canvas) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-auto" preserveaspectratio="xMidYMid slice" viewbox="0 0 1000 800">
+<!-- Path to Destination -->
+<path class="animate-[dash_1s_linear_infinite]" d="M 200,600 Q 300,500 500,400 T 800,200" fill="none" stroke="url(#route-gradient)" stroke-dasharray="10,10" stroke-width="6"></path>
+<defs>
+<lineargradient id="route-gradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#0066ff"></stop>
+<stop offset="100%" stop-color="#ff5e07"></stop>
+</lineargradient>
+</defs>
+<!-- Current Location Marker -->
+<g transform="translate(200, 600)">
+<circle cx="0" cy="0" fill="#0066ff" fill-opacity="0.2" r="12" stroke="#0066ff" stroke-width="2"></circle>
+<circle cx="0" cy="0" fill="#0066ff" r="4"></circle>
+</g>
+<!-- Destination Marker -->
+<g transform="translate(800, 200)">
+<circle class="animate-pulse" cx="0" cy="0" fill="#ff5e07" fill-opacity="0.2" r="20" stroke="#ff5e07" stroke-width="2"></circle>
+<circle cx="0" cy="0" fill="#ff5e07" r="6"></circle>
+<rect fill="#111316" height="24" rx="4" stroke="#424656" stroke-width="1" width="80" x="-40" y="-45"></rect>
+<text fill="#e2e2e6" font-family="Lexend" font-size="12" font-weight="600" text-anchor="middle" x="0" y="-28">SEC 112</text>
+</g>
+<!-- Amenities Pins -->
+<!-- Restroom -->
+<g class="cursor-pointer hover:opacity-80" transform="translate(350, 300)">
+<circle cx="0" cy="0" fill="#111316" r="16" stroke="#0066ff" stroke-width="1.5"></circle>
+<text fill="#b3c5ff" font-family="Material Symbols Outlined" font-size="16" text-anchor="middle" x="0" y="4">wc</text>
+</g>
+<!-- Food -->
+<g class="cursor-pointer hover:opacity-80" transform="translate(600, 500)">
+<circle cx="0" cy="0" fill="#111316" r="16" stroke="#007e86" stroke-width="1.5"></circle>
+<text fill="#00dbe9" font-family="Material Symbols Outlined" font-size="16" text-anchor="middle" x="0" y="4">fastfood</text>
+</g>
+<!-- Merch -->
+<g class="cursor-pointer hover:opacity-80" transform="translate(450, 650)">
+<circle cx="0" cy="0" fill="#111316" r="16" stroke="#ff5e07" stroke-width="1.5"></circle>
+<text fill="#ffb59a" font-family="Material Symbols Outlined" font-size="16" text-anchor="middle" x="0" y="4">local_mall</text>
+</g>
+</svg>
+<!-- Live Status Ticker (Absolute Bottom) -->
+<div class="absolute bottom-0 w-full bg-surface-container-highest border-t border-white/10 px-4 py-2 flex items-center justify-between z-20">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-data-mono text-data-mono text-secondary">LIVE UPDATES</span>
+</div>
+<div class="font-body-sm text-outline overflow-hidden whitespace-nowrap">
+<span class="inline-block">Heavy traffic near North Concourse. Alternate route suggested via East Wing...</span>
+</div>
+</div>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden w-full bg-[#121417]/90 backdrop-blur-md pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-sm text-[10px] mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-[#0066FF] shadow-[inset_0_4px_0_#0066FF] bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-sm text-[10px] mt-1 text-white">Live Map</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">fastfood</span>
+<span class="font-label-sm text-[10px] mt-1">Express</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">rss_feed</span>
+<span class="font-label-sm text-[10px] mt-1">Feed</span>
+</a>
+</div>
+</nav>
+</main>
+<style>
+        /* Minimal custom CSS for necessary animations that Tailwind doesn't do easily out of the box */
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</body></html>

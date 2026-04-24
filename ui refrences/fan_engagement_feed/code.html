@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Stadium - Fan Engagement &amp; Live Info</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#0c0e11",
+                        "on-tertiary-container": "#e3fdff",
+                        "on-primary": "#002b75",
+                        "on-tertiary-fixed": "#002022",
+                        "secondary-fixed": "#ffdbce",
+                        "surface-bright": "#37393d",
+                        "surface-dim": "#111316",
+                        "surface-container-high": "#282a2d",
+                        "on-surface-variant": "#c2c6d8",
+                        "primary-fixed-dim": "#b3c5ff",
+                        "secondary-fixed-dim": "#ffb59a",
+                        "on-secondary-fixed-variant": "#802a00",
+                        "surface-tint": "#b3c5ff",
+                        "on-tertiary-fixed-variant": "#004f54",
+                        "surface-variant": "#333538",
+                        "outline-variant": "#424656",
+                        "on-tertiary": "#00363a",
+                        "primary-container": "#0066ff",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#2f3034",
+                        "surface-container": "#1e2023",
+                        "surface": "#111316",
+                        "surface-container-low": "#1a1c1f",
+                        "on-surface": "#e2e2e6",
+                        "primary-fixed": "#dae1ff",
+                        "on-primary-fixed-variant": "#003fa4",
+                        "primary": "#b3c5ff",
+                        "on-primary-fixed": "#001849",
+                        "background": "#111316",
+                        "secondary": "#ffb59a",
+                        "surface-container-highest": "#333538",
+                        "tertiary": "#00dbe9",
+                        "on-secondary-container": "#531900",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#e2e2e6",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "secondary-container": "#ff5e07",
+                        "outline": "#8c90a1",
+                        "tertiary-fixed": "#7df4ff",
+                        "tertiary-container": "#007e86",
+                        "tertiary-fixed-dim": "#00dbe9",
+                        "on-secondary": "#5a1b00",
+                        "on-background": "#e2e2e6",
+                        "inverse-primary": "#0054d6",
+                        "on-primary-container": "#f8f7ff",
+                        "on-secondary-fixed": "#370e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "unit": "4px",
+                        "margin": "20px",
+                        "stack-sm": "8px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Lexend"],
+                        "label-sm": ["Lexend"],
+                        "body-md": ["Lexend"],
+                        "body-lg": ["Lexend"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row antialiased">
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-6 py-4 bg-[#121417]/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 shadow-[0_0_15px_rgba(0,102,255,0.1)]">
+<div class="text-xl font-black text-white italic tracking-tighter">KINETIC STADIUM</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#0066FF] hover:bg-white/5 transition-all p-2 rounded-full cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#0066FF] hover:bg-white/5 transition-all p-2 rounded-full cursor-pointer" data-icon="sensors">sensors</span>
+</div>
+</header>
+<!-- SideNavBar (Web) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col z-40 bg-[#121417] border-r border-white/10 backdrop-blur-2xl w-64 border-r border-white/5 no-shadows">
+<div class="p-6">
+<div class="text-white font-black text-2xl mb-8 italic tracking-tighter">KINETIC STADIUM</div>
+<div class="flex items-center gap-3 mb-8">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full border border-white/20" data-alt="Close up portrait of a young male fan with stadium lights in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDneQFiXNQ960bXN8iQycqB95Dn0ij0SC86KenuaIROxa-S554BQb5v821a2KjklZFQuIeV39t_CmgpBIoq3HQj3zf3B-NTQxkI3ahesiRa9f9XhEhzWOoe2QLNPv4XJJbildmyWYToyCQrQkThQEVKILlCTAl1Ktj1f9IkIiJ8K1-_ICbXg-N_WEEcAda5Y6BiGz0iHsTP5YMqqiRFLZWMenlzRlrJrqSMoF7AUcqPWdzL67jEVQvg08qhU_Iu7wjNArU2Bf22Ok2r"/>
+<div>
+<div class="font-data-mono text-data-mono text-white">Section 112, Row 14</div>
+<button class="font-label-sm text-label-sm text-primary-container mt-1 uppercase tracking-widest hover:text-white transition-colors duration-200 ease-in-out">VIEW TICKET</button>
+</div>
+</div>
+<ul class="flex flex-col gap-2 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+<li>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+                        Live Map
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined" data-icon="fastfood">fastfood</span>
+                        Express Orders
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-white border-l-4 border-[#0066FF] bg-gradient-to-r from-[#0066FF]/20 to-transparent py-3 px-6 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined text-[#0066FF]" data-icon="rss_feed" data-weight="fill" style="font-variation-settings: 'FILL' 1;">rss_feed</span>
+                        Fan Feed
+                    </a>
+</li>
+</ul>
+</div>
+<div class="mt-auto p-6 border-t border-white/5">
+<ul class="flex flex-col gap-2 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+<li>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                        Settings
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out rounded-r-full" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                        Support
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-margin min-h-screen flex flex-col gap-stack-lg pb-24 md:pb-margin relative overflow-hidden">
+<!-- Background Elements -->
+<div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-container/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary-container/10 blur-[100px] rounded-full"></div>
+</div>
+<!-- Live Score Ticker -->
+<div class="relative z-10 w-full bg-black border-y border-outline-variant/50 py-2 overflow-hidden flex items-center">
+<div class="bg-secondary-container text-white font-data-mono text-label-sm px-3 py-1 rounded-sm flex items-center gap-2 z-20 shrink-0 ml-4 animate-pulse">
+<span class="w-2 h-2 rounded-full bg-white"></span> LIVE
+            </div>
+<div class="flex-1 whitespace-nowrap overflow-hidden relative ml-4 mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent)">
+<div class="inline-flex gap-8 font-data-mono text-data-mono text-on-surface-variant animate-[marquee_20s_linear_infinite]">
+<span>Q3 08:42 | KNT 84 - 76 AWY</span>
+<span class="text-primary-container">•</span>
+<span>POSSESSION: KNT 62%</span>
+<span class="text-primary-container">•</span>
+<span>TIMEOUTS: KNT 2 - 3 AWY</span>
+<span class="text-primary-container">•</span>
+<span>FOULS: KNT 4 - 6 AWY</span>
+<span class="text-primary-container">•</span>
+<span>Q3 08:42 | KNT 84 - 76 AWY</span>
+</div>
+</div>
+</div>
+<div class="relative z-10 flex flex-col gap-stack-lg max-w-7xl mx-auto w-full">
+<header>
+<h1 class="font-headline-lg text-headline-lg text-white mb-2">Fan Feed &amp; Live Info</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time stadium pulse and match analytics.</p>
+</header>
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Center Column: Match Centre & Replays -->
+<div class="lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- Live Match Centre (Glass Card) -->
+<section class="glass-panel rounded-xl p-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/5 to-transparent pointer-events-none"></div>
+<h2 class="font-headline-md text-headline-md text-white mb-6 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="query_stats">query_stats</span>
+                            Live Match Centre
+                        </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Stats Group -->
+<div class="flex flex-col gap-4">
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase">
+<span>Possession</span>
+<span class="text-primary-container font-data-mono">62% / 38%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-gradient-to-r from-primary-container to-tertiary w-[62%]"></div>
+<div class="h-full bg-outline-variant w-[38%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase">
+<span>Shots on Goal</span>
+<span class="font-data-mono">14 / 8</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-gradient-to-r from-primary-container to-tertiary w-[63%]"></div>
+<div class="h-full bg-outline-variant w-[37%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase">
+<span>Pass Accuracy</span>
+<span class="font-data-mono">88% / 74%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-gradient-to-r from-primary-container to-tertiary w-[88%]"></div>
+<div class="h-full bg-outline-variant w-[12%]"></div>
+</div>
+</div>
+</div>
+<!-- Heatmap -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-4 relative h-48 md:h-auto">
+<div class="absolute top-2 left-2 font-label-sm text-label-sm text-on-surface-variant uppercase z-10 bg-black/50 px-2 py-1 rounded">Team Heatmap</div>
+<div class="w-full h-full rounded bg-[url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&amp;fit=crop&amp;q=80&amp;w=600&amp;h=400')] bg-cover bg-center relative opacity-80" data-alt="Abstract heat map graphic overlaying a dark stylized sports pitch">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<!-- Simulated Heat Zones -->
+<div class="absolute bottom-1/4 right-1/4 w-16 h-16 bg-secondary-container blur-xl rounded-full opacity-60"></div>
+<div class="absolute top-1/3 left-1/2 w-20 h-20 bg-primary-container blur-xl rounded-full opacity-40"></div>
+<div class="absolute top-1/4 right-1/3 w-12 h-12 bg-tertiary blur-lg rounded-full opacity-50"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Instant Replays -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-headline-md text-headline-md text-white flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="play_circle">play_circle</span>
+                                Instant Replays
+                            </h2>
+<button class="font-label-sm text-label-sm text-on-surface-variant hover:text-white uppercase tracking-wider transition-colors">View All</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x">
+<!-- Replay Card 1 -->
+<div class="min-w-[280px] w-[280px] md:min-w-[320px] glass-panel rounded-xl overflow-hidden snap-start group cursor-pointer relative border-primary-container/30">
+<div class="absolute inset-0 bg-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+<div class="h-40 w-full relative">
+<img alt="Highlight thumbnail" class="w-full h-full object-cover" data-alt="Action shot of a sports player scoring with stadium lights blurring in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6sCfcejimHijfdEyTHsskVx5rRN7I_ddkoP7eF1OVC_zKUdTLaQjlVMtPloc4nMmYvYfDeUoBr4mkLamtgSpVKosjgzrbgJY08RsyEmc5_r-j0UER_dAw4oLQ_s4Cd7QvY0uG2XKEuBhY2O8o0b8P83Wh3ng2hGx2Jckk1CanDe_m-mdwEgOn2IDFOHvKmfmvfA9rqwuUzMKq_DPRtI-yAph6d5PCdonP6pUosTWrcMqwdwplb3hiR2nYPYYHfpl0g9aF093y2DG"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-5xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all drop-shadow-lg" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-white font-data-mono text-xs">0:15</div>
+</div>
+<div class="p-4">
+<div class="font-label-sm text-label-sm text-primary-container uppercase mb-1">Q3 08:42</div>
+<h3 class="font-body-md text-body-md text-white font-semibold line-clamp-2 group-hover:text-primary-container transition-colors">Incredible three-point shot from half court</h3>
+</div>
+</div>
+<!-- Replay Card 2 -->
+<div class="min-w-[280px] w-[280px] md:min-w-[320px] glass-panel rounded-xl overflow-hidden snap-start group cursor-pointer relative">
+<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+<div class="h-40 w-full relative">
+<img alt="Highlight thumbnail" class="w-full h-full object-cover" data-alt="Close up of sports players celebrating a point surrounded by blurred fans" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCon4vWZTaNvOnQuSjUTSprFkLdERw9BpNtEWGTcbvzMXMJrV5MprgkJp6jJ42NlwLg427B6SqsgytdLOwuCb6DezSVn0zEGRHwLWaLzBC9Eh7LHjeiSS_0KWlg7BGXtaWXCF8pehkBxannb_72CGyIXpAPvEXgyiLD6xYqSOER6VdxnXtlYLlEbeTiSFPwLfQWq906_BNLqdPUGOSAwbOxalxLLGJ2_Fvxpsp-KqIQDOyIXeiRpAAYENf0Xpmdsd_AC_qqZJZ-yVPO"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-5xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all drop-shadow-lg" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-white font-data-mono text-xs">0:24</div>
+</div>
+<div class="p-4">
+<div class="font-label-sm text-label-sm text-outline-variant uppercase mb-1">Q2 14:12</div>
+<h3 class="font-body-md text-body-md text-white font-semibold line-clamp-2 group-hover:text-white/80 transition-colors">Defensive stop leads to fast break score</h3>
+</div>
+</div>
+<!-- Replay Card 3 -->
+<div class="min-w-[280px] w-[280px] md:min-w-[320px] glass-panel rounded-xl overflow-hidden snap-start group cursor-pointer relative">
+<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+<div class="h-40 w-full relative">
+<img alt="Highlight thumbnail" class="w-full h-full object-cover" data-alt="Wide shot of the stadium arena with dramatic spotlighting on the playing surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHn9GoooUP0EJjm_gbz8b6otN8ZVWdLBlMQoUrcWK0JNgDOXj2Ewimv4cAS_9llUTviCY9zVQjGV4tGT8_gI3PtZ7MImF6Cv8ZC_U8Q2ln0UJUsOicp3A-4Z1FEV90g083-uGZs1zXwRxxRfR72jLbBqe6TB9xTeRAfeRf-Kw4i92yakdzu4YiWuQDsz3gLXrLWJU4ls__TkjyXV7ndVpFhg0CGTfCENXtFTcPGBTZeo5pKHtSIjTky40-UM9meUQ8OJpJi9G-BiYV"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-5xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all drop-shadow-lg" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-white font-data-mono text-xs">1:02</div>
+</div>
+<div class="p-4">
+<div class="font-label-sm text-label-sm text-outline-variant uppercase mb-1">Q1 Highlights</div>
+<h3 class="font-body-md text-body-md text-white font-semibold line-clamp-2 group-hover:text-white/80 transition-colors">First quarter full highlight reel compilation</h3>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Venue Buzz & Post-Match -->
+<div class="lg:col-span-4 flex flex-col gap-stack-lg">
+<!-- Venue Buzz -->
+<section class="glass-panel rounded-xl p-6 flex-1 flex flex-col min-h-[400px]">
+<h2 class="font-headline-md text-headline-md text-white mb-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="campaign">campaign</span>
+                            Venue Buzz
+                        </h2>
+<div class="flex-1 flex flex-col gap-4 overflow-y-auto hide-scrollbar pr-2 relative">
+<!-- Official Announcement -->
+<div class="bg-surface-container-high/50 border-l-4 border-primary-container rounded-r-lg p-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="material-symbols-outlined text-primary-container text-sm" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center text-white font-bold text-xs">KS</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Kinetic Stadium</span>
+<span class="text-outline text-xs ml-auto">2m ago</span>
+</div>
+<p class="font-body-sm text-sm text-white">Halftime show starting in 5 minutes! Grab your snacks and return to your seats. 🏟️✨</p>
+</div>
+<!-- Fan Post 1 -->
+<div class="border-b border-white/5 pb-4">
+<div class="flex items-center gap-3 mb-2">
+<img alt="User avatar" class="w-8 h-8 rounded-full" data-alt="Portrait of young woman smiling outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDa25OJmAdnvG3uT_CsggA6z6861kyA0epwgoYkvyYo-pyv5rMHBo-HPkzmzTaQ-mjZbyMBZG5Ux_TBFbc-LROHEu_bC9qXQpvqlVF5Cf9E0aHhjMFj8asUaeQ1dbK6VW8965mp0t386FsiNxqHo1sEW0dLTFg3V-x8q5YGMnQrpZadr6jjvH7YrP7hOsQCQbhJUMjMgZ42t9KY0hZqxGYi4sW7GaHo_Sy0yEemaNqLwgp_ntyqRBJDAgems4VIoWzF4z2Ac-m8MKe"/>
+<div class="flex-1">
+<div class="font-label-sm text-label-sm text-white font-semibold">@SarahK_Sports</div>
+<div class="text-xs text-outline-variant">Sec 204 • 12m ago</div>
+</div>
+</div>
+<p class="font-body-sm text-sm text-on-surface-variant mb-2">The energy in here is UNREAL tonight! Let's go KNT! 🔥🔥</p>
+<img alt="Fan view" class="w-full h-32 object-cover rounded-lg border border-white/10" data-alt="Wide view of a packed sports stadium from the stands with bright lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsftBY_6huVFhTelLPOgQ9qi4aDtGXnbYoeaYWr23kjtI95MMCucgRwyXQl2tGHfocBtcLShA89NyZ9kVyCxeM5BkWfiCu8i4jmYc9sFYdv9BAU4w5x8hXy-IVTwIzv5rj5OGnVRvDfSgn9wiBQYQKeLU6CcR_x78WRn_lsK3DOD0OkZgCq2DeYgqIXQ2PPWrZ2MYskl0Bhpaj6zY-H5KwagdpMj6llZG86aUgYe24d2wmqtAULryQKFjIw3cuQrHardXM0CKxouqa"/>
+</div>
+<!-- Fan Post 2 -->
+<div class="border-b border-white/5 pb-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-white font-bold text-xs">M</div>
+<div class="flex-1">
+<div class="font-label-sm text-label-sm text-white font-semibold">@MikeTheFan</div>
+<div class="text-xs text-outline-variant">Sec 112 • 18m ago</div>
+</div>
+</div>
+<p class="font-body-sm text-sm text-on-surface-variant">That last play was insane. Worth the ticket price alone.</p>
+</div>
+<!-- Gradient fade at bottom of scrollable area -->
+<div class="sticky bottom-0 left-0 w-full h-12 bg-gradient-to-t from-[#121417] to-transparent pointer-events-none rounded-b-xl"></div>
+</div>
+</section>
+<!-- Post-Match Planning -->
+<section class="glass-panel rounded-xl p-6 bg-surface-container-high/30">
+<h2 class="font-headline-md text-headline-md text-white mb-4 flex items-center gap-3 text-lg">
+<span class="material-symbols-outlined text-outline" data-icon="directions_bus">directions_bus</span>
+                            Post-Match Info
+                        </h2>
+<div class="flex flex-col gap-3">
+<!-- Alert -->
+<div class="bg-secondary-container/10 border border-secondary-container/30 rounded p-3 flex gap-3 items-start">
+<span class="material-symbols-outlined text-secondary-container text-lg mt-0.5" data-icon="warning">warning</span>
+<div>
+<div class="font-label-sm text-label-sm text-secondary-container uppercase mb-1">Traffic Alert</div>
+<p class="text-xs text-on-surface-variant">Heavy congestion expected on I-95 North exit. Consider alternate route via Main St.</p>
+</div>
+</div>
+<!-- Shuttle -->
+<div class="flex items-center justify-between p-3 rounded hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="directions_transit">directions_transit</span>
+</div>
+<div>
+<div class="font-body-md text-sm text-white font-medium">Express Shuttle</div>
+<div class="text-xs text-outline-variant">Leaves from Gate B</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-data-mono text-sm text-primary-container">10m</div>
+<div class="text-[10px] text-outline-variant uppercase">Next Dep.</div>
+</div>
+</div>
+<!-- Promo -->
+<div class="mt-2 rounded-lg bg-gradient-to-r from-tertiary-container/40 to-primary-container/20 p-4 border border-tertiary/20 flex justify-between items-center group cursor-pointer relative overflow-hidden">
+<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div>
+<div class="font-label-sm text-label-sm text-tertiary uppercase mb-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="local_bar">local_bar</span>
+                                        Happy Hour
+                                    </div>
+<div class="font-body-md text-sm text-white font-medium">50% off drinks at The Draft</div>
+</div>
+<span class="material-symbols-outlined text-white/50 group-hover:text-white transition-colors group-hover:translate-x-1" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-[#121417]/90 backdrop-blur-xl border-t border-white/5 pb-safe z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
+<ul class="flex justify-around items-center px-2 py-3 font-['Space_Grotesk'] text-[10px] uppercase tracking-wider">
+<li class="flex-1">
+<a class="flex flex-col items-center gap-1 text-slate-500 py-2 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span>Dash</span>
+</a>
+</li>
+<li class="flex-1">
+<a class="flex flex-col items-center gap-1 text-slate-500 py-2 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="map">map</span>
+<span>Map</span>
+</a>
+</li>
+<li class="flex-1">
+<a class="flex flex-col items-center gap-1 text-[#0066FF] py-2 relative" href="#">
+<div class="absolute -top-1 w-8 h-1 bg-[#0066FF] rounded-b-full shadow-[0_0_8px_#0066FF]"></div>
+<span class="material-symbols-outlined text-xl drop-shadow-[0_0_8px_rgba(0,102,255,0.5)]" data-icon="rss_feed" data-weight="fill" style="font-variation-settings: 'FILL' 1;">rss_feed</span>
+<span>Feed</span>
+</a>
+</li>
+<li class="flex-1">
+<a class="flex flex-col items-center gap-1 text-slate-500 py-2 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="fastfood">fastfood</span>
+<span>Food</span>
+</a>
+</li>
+<li class="flex-1">
+<a class="flex flex-col items-center gap-1 text-slate-500 py-2 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>More</span>
+</a>
+</li>
+</ul>
+</nav>
+</body></html>

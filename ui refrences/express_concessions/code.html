@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KINETIC STADIUM - Express Orders</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&amp;family=Lexend:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#0c0e11",
+                      "on-tertiary-container": "#e3fdff",
+                      "on-primary": "#002b75",
+                      "on-tertiary-fixed": "#002022",
+                      "secondary-fixed": "#ffdbce",
+                      "surface-bright": "#37393d",
+                      "surface-dim": "#111316",
+                      "surface-container-high": "#282a2d",
+                      "on-surface-variant": "#c2c6d8",
+                      "primary-fixed-dim": "#b3c5ff",
+                      "secondary-fixed-dim": "#ffb59a",
+                      "on-secondary-fixed-variant": "#802a00",
+                      "surface-tint": "#b3c5ff",
+                      "on-tertiary-fixed-variant": "#004f54",
+                      "surface-variant": "#333538",
+                      "outline-variant": "#424656",
+                      "on-tertiary": "#00363a",
+                      "primary-container": "#0066ff",
+                      "on-error-container": "#ffdad6",
+                      "inverse-on-surface": "#2f3034",
+                      "surface-container": "#1e2023",
+                      "surface": "#111316",
+                      "surface-container-low": "#1a1c1f",
+                      "on-surface": "#e2e2e6",
+                      "primary-fixed": "#dae1ff",
+                      "on-primary-fixed-variant": "#003fa4",
+                      "primary": "#b3c5ff",
+                      "on-primary-fixed": "#001849",
+                      "background": "#111316",
+                      "secondary": "#ffb59a",
+                      "surface-container-highest": "#333538",
+                      "tertiary": "#00dbe9",
+                      "on-secondary-container": "#531900",
+                      "error": "#ffb4ab",
+                      "inverse-surface": "#e2e2e6",
+                      "error-container": "#93000a",
+                      "on-error": "#690005",
+                      "secondary-container": "#ff5e07",
+                      "outline": "#8c90a1",
+                      "tertiary-fixed": "#7df4ff",
+                      "tertiary-container": "#007e86",
+                      "tertiary-fixed-dim": "#00dbe9",
+                      "on-secondary": "#5a1b00",
+                      "on-background": "#e2e2e6",
+                      "inverse-primary": "#0054d6",
+                      "on-primary-container": "#f8f7ff",
+                      "on-secondary-fixed": "#370e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "unit": "4px",
+                      "margin": "20px",
+                      "stack-sm": "8px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "data-mono": [
+                              "Lexend"
+                      ],
+                      "label-sm": [
+                              "Lexend"
+                      ],
+                      "body-md": [
+                              "Lexend"
+                      ],
+                      "body-lg": [
+                              "Lexend"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "display-xl": [
+                              "Space Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .active-overlay {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 0 20px rgba(0, 102, 255, 0.2);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar Mobile Only -->
+<header class="md:hidden docked full-width top-0 border-b border-white/10 bg-[#121417]/80 backdrop-blur-md shadow-[0_0_15px_rgba(0,102,255,0.1)] flex justify-between items-center w-full px-6 py-4 z-50 sticky">
+<div class="text-[#0066FF] text-xl font-black italic tracking-tighter">KINETIC STADIUM</div>
+<div class="flex items-center gap-4">
+<button aria-label="notifications" class="text-slate-400 hover:bg-white/5 transition-all p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="sensors" class="text-slate-400 hover:bg-white/5 transition-all p-2 rounded-full">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar Web Only -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col z-40 bg-[#121417] border-r border-white/10 backdrop-blur-2xl w-64 border-r border-white/5 no-shadows pb-6">
+<div class="p-6">
+<div class="text-white font-black text-2xl mb-8 italic tracking-tighter">KINETIC STADIUM</div>
+<div class="flex items-center gap-3 mb-6 p-3 rounded-lg glass-card">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover border border-white/20" data-alt="Close up portrait of a young man with neutral expression, soft stadium lighting, slightly blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnvLvzbymZZZs8WkKAvXh_qLg5DIIx2lQeuDl9kRhSOoGUzPcM4OR0_fJH5RvNOuHk5vh_NO-9g0c2mT1Hg0gPptpstajmrXvZhMkETCijeeLfxKJK3oUubuYIgURiczuCw4STigQlP45iFyw2t7CmKC-6o-yy6blYXV5ub2shX8_lJQPpYDe5FnD_d_1546pLdvqTHgYOs6ZseLdiVCDtVCe7e4r_QFZbW6GJQ6y0P81wAwBvR7vD8yDXyDXvOkE_c9jtqreQPCeh"/>
+<div>
+<div class="font-data-mono text-data-mono text-white">Section 112, Row 14</div>
+<div class="font-label-sm text-label-sm text-primary-container uppercase mt-1 cursor-pointer hover:text-primary-fixed-dim transition-colors">VIEW TICKET</div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-1 px-4 mt-4">
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 rounded-r-full hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 rounded-r-full hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">map</span>
+                    Live Map
+                </a>
+<a class="flex items-center gap-4 text-white border-l-4 border-[#0066FF] bg-gradient-to-r from-[#0066FF]/20 to-transparent py-3 px-6 rounded-r-full Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">fastfood</span>
+                    Express Orders
+                </a>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 rounded-r-full hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">rss_feed</span>
+                    Fan Feed
+                </a>
+</div>
+<div class="mt-auto px-4 flex flex-col gap-1">
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 rounded-r-full hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-4 text-slate-500 py-3 px-6 rounded-r-full hover:text-white hover:bg-white/5 Transition-colors duration-200 ease-in-out font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold" href="#">
+<span class="material-symbols-outlined">help</span>
+                    Support
+                </a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-margin md:p-stack-lg flex flex-col gap-stack-lg relative overflow-y-auto">
+<!-- Dynamic Background -->
+<div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+<div class="absolute top-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-container/5 blur-[120px]"></div>
+<div class="absolute bottom-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-tertiary-container/5 blur-[150px]"></div>
+</div>
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+<div>
+<h1 class="font-display-xl text-display-xl text-white uppercase mb-2">Express Concessions</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Order ahead. Skip the lines. Pick up at the nearest express lane.</p>
+</div>
+<!-- Status Pill -->
+<div class="glass-card rounded-full px-6 py-3 flex items-center gap-3 w-fit">
+<div class="w-3 h-3 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="font-data-mono text-data-mono text-secondary-container uppercase">Live Prep Time: 4-7 Mins</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Menu Area -->
+<div class="lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- Categories -->
+<div class="flex overflow-x-auto gap-4 pb-2 hide-scrollbar">
+<button class="whitespace-nowrap px-6 py-3 rounded-full bg-primary-container text-white font-label-sm text-label-sm uppercase glow-hover transition-all">Hot Food</button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full glass-card text-on-surface hover:bg-white/5 font-label-sm text-label-sm uppercase transition-all border border-white/10">Drinks</button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full glass-card text-on-surface hover:bg-white/5 font-label-sm text-label-sm uppercase transition-all border border-white/10">Snacks</button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full glass-card text-on-surface hover:bg-white/5 font-label-sm text-label-sm uppercase transition-all border border-white/10">Merch Express</button>
+</div>
+<!-- Vendor Module -->
+<div class="glass-card rounded-xl p-6 flex flex-col gap-stack-md">
+<div class="flex justify-between items-center border-b border-white/10 pb-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-white uppercase">Grill Station Alpha</h2>
+<p class="font-label-sm text-label-sm text-outline uppercase mt-1">Section 110 • 2 Mins Walk</p>
+</div>
+<div class="text-right">
+<div class="font-data-mono text-data-mono text-tertiary">EST. 5 MINS</div>
+</div>
+</div>
+<!-- Grid Items -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Item Card 1 -->
+<div class="glass-card rounded-lg p-4 flex gap-4 relative overflow-hidden group cursor-pointer hover:bg-white/5 transition-all">
+<div class="w-24 h-24 rounded-md overflow-hidden shrink-0 bg-surface-container">
+<img alt="Classic Stadium Burger" class="w-full h-full object-cover" data-alt="Gourmet stadium burger with melted cheese, lettuce, tomato on a brioche bun, dramatic top-down lighting on dark slate background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWv2VhKQeURB3Y9dyGEL2i59ZqTkjdywP7-zebF0yhbNArN246vj-xvN8kkciTmZqDOSJrecGi4QI-EiG0JKfuIlUKxWGwBWLf5M68Clkq1dmmnziwMYm1W-wNGrT4u18F6Tt5D-wLkYRIwUA2GWlL1wDCs0Uk6a6lle2F69P5JSU6Pj1QiucQnNdo1IPVM3D2xvUKuE2135uQEG9K5V6YEJjLb_IoPlQfI2YmsJLzA2ztIYm0DR6qWI2lnFQKlTJ51gl-TkWYlRss"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-body-lg text-body-lg text-white font-bold leading-tight">Kinetic Classic Burger</h3>
+<span class="font-data-mono text-data-mono text-primary-fixed">$14</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline mt-1 line-clamp-2">Double smash patty, house sauce, brioche.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-data-mono text-data-mono text-on-surface-variant text-[10px]">850 CAL</span>
+<button aria-label="Add to cart" class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center glow-hover transition-all">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item Card 2 -->
+<div class="glass-card rounded-lg p-4 flex gap-4 relative overflow-hidden group cursor-pointer hover:bg-white/5 transition-all">
+<div class="w-24 h-24 rounded-md overflow-hidden shrink-0 bg-surface-container">
+<img alt="Loaded Fries" class="w-full h-full object-cover" data-alt="Crispy french fries loaded with cheese sauce, bacon bits, and jalapeños in a paper stadium tray, dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfC0TDMJgO3_gxzcrvFs6WpMxuI7cdpiYBBOObROy0z6oxxaPFXGPDwMzWyS52LAeqmLma2M6mt78ZbutamzL9q0Oh2Tz58te_WK8cjEECb0RPYj2ZgQ29fMaRJ3Rcm9IQ85zutOGRSRJBvgcGHRY_S-XTtXurvD9OSw2GD3yoMgrhzXhDhhFelbSAjo-r31KVFBTpbvvsnfWJ_PuhbOfQu9nBk3KiHIpbaaiCdijhtBuR-cam1SYeONlNnGpfQAuYKHkhJftBjYwF"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-body-lg text-body-lg text-white font-bold leading-tight">High-Voltage Fries</h3>
+<span class="font-data-mono text-data-mono text-primary-fixed">$9</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline mt-1 line-clamp-2">Crispy fries, cheese sauce, bacon, jalapeños.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-data-mono text-data-mono text-on-surface-variant text-[10px]">1120 CAL</span>
+<button aria-label="Add to cart" class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center glow-hover transition-all">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Active Order / Cart Sidebar -->
+<div class="lg:col-span-4 flex flex-col gap-stack-md h-fit sticky top-24">
+<div class="active-overlay rounded-xl p-6 flex flex-col gap-stack-md relative overflow-hidden">
+<!-- Glow Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container via-tertiary to-primary-container"></div>
+<h2 class="font-headline-md text-headline-md text-white uppercase">Your Order</h2>
+<div class="flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+<!-- Cart Item -->
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center font-data-mono text-data-mono text-white">1x</div>
+<div>
+<div class="font-body-md text-body-md text-white">Kinetic Classic Burger</div>
+<div class="font-label-sm text-label-sm text-outline">No Onions</div>
+</div>
+</div>
+<span class="font-data-mono text-data-mono text-primary-fixed">$14.00</span>
+</div>
+</div>
+<div class="border-t border-white/10 pt-4 flex flex-col gap-2">
+<div class="flex justify-between items-center font-label-sm text-label-sm text-on-surface-variant">
+<span>Subtotal</span>
+<span>$14.00</span>
+</div>
+<div class="flex justify-between items-center font-label-sm text-label-sm text-on-surface-variant">
+<span>Tax</span>
+<span>$1.12</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-body-lg text-body-lg text-white font-bold uppercase">Total</span>
+<span class="font-data-mono text-data-mono text-tertiary text-xl">$15.12</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-lg bg-primary-container text-white font-label-sm text-label-sm uppercase font-bold tracking-widest glow-hover transition-all flex items-center justify-center gap-2 mt-2">
+<span class="material-symbols-outlined" style="font-size: 20px;">contactless</span>
+                            TAP TO PAY
+                        </button>
+</div>
+<!-- Pickup Window Preview -->
+<div class="glass-card rounded-xl p-6 border-l-4 border-l-secondary-container">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary-container text-3xl">local_pizza</span>
+<div>
+<h3 class="font-body-lg text-body-lg text-white uppercase mb-1">Previous Order Ready</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Section 112 Pizza</p>
+<div class="mt-4 p-3 bg-surface rounded flex items-center justify-between">
+<span class="font-data-mono text-data-mono text-white tracking-widest text-lg">#A942</span>
+<span class="material-symbols-outlined text-white">qr_code_2</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
