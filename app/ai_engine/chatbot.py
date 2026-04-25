@@ -16,8 +16,9 @@ from typing import Optional, Any
 
 import google.generativeai as genai
 
-from app.config import settings
+from app.config import settings, ZONE_REGISTRY
 from app.config_data import EVENT_INFO, VENUE_POLICY
+from app.crowd_engine.simulator import get_zone_density_map, _density_to_status
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,11 @@ _ROUTE_KEYWORDS = (
     "wait", "queue", "line", "how long", "restroom wait", "bathroom",
     "which gate", "crowd level", "crowded",
 )
+_FOOD_KEYWORDS = (
+    "food", "eat", "hungry", "snack", "drink", "beer", "water", "chai",
+    "restaurant", "stall", "concession", "menu", "order", "pizza",
+    "burger", "samosa", "where should i eat", "best food", "quick bite",
+)
 _PROHIBITED_KEYWORDS = (
     "not allowed", "prohibited", "banned", "can i bring", "forbidden",
     "allowed in", "items", "what can", "bring into",
@@ -95,6 +101,7 @@ def _classify_intent(query_input: str) -> Optional[str]:
     """
     query_lower = query_input.lower()
     intent_map = [
+        (_FOOD_KEYWORDS, "food"),
         (_ROUTE_KEYWORDS, "route"),
         (_PROHIBITED_KEYWORDS, "prohibited"),
         (_BAG_KEYWORDS, "bag"),
@@ -114,9 +121,35 @@ def _classify_intent(query_input: str) -> Optional[str]:
     return None
 
 
+def _build_live_crowd_context() -> str:
+    """Builds a real-time crowd snapshot string from the simulation engine."""
+    density_map = get_zone_density_map()
+    lines = ["LIVE CROWD DENSITY (real-time):"]
+    for zone_id, density in density_map.items():
+        zone = ZONE_REGISTRY.get(zone_id, {})
+        status = _density_to_status(density)
+        lines.append(
+            f"- {zone.get('name', zone_id)}: {density}% capacity ({status})"
+        )
+    return "\n".join(lines)
+
+
 def _build_grounded_context(intent: str) -> str:
-    """Maps an intent to structured-data excerpt for Gemini grounding."""
+    """Maps an intent to structured-data excerpt for Gemini grounding.
+
+    For food and route intents, live crowd density data is automatically
+    injected so the model can make real-time recommendations.
+    """
+    live_crowd = _build_live_crowd_context()
+
     context_map = {
+        "food": (
+            f"{VENUE_POLICY['food_and_beverages']}\n\n"
+            f"{live_crowd}\n\n"
+            "INSTRUCTION: Recommend the least crowded food area based on "
+            "the live density data above. Always mention specific density "
+            "percentages to justify your recommendation."
+        ),
         "prohibited": (
             "Prohibited items:\n"
             + "\n".join(f"- {i}" for i in VENUE_POLICY["prohibited_items"])

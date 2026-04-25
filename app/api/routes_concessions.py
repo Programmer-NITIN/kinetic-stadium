@@ -227,6 +227,32 @@ async def get_menu():
     )
 
 
+@router.get("/ai-recommend")
+async def get_ai_recommendation():
+    """Returns a Gemini-powered personalized food recommendation.
+
+    Analyzes crowd density, wait times, and menu to suggest the optimal order.
+    """
+    from app.ai_engine.food_recommender import generate_food_recommendation
+    stations = _build_menu()
+    menu_data = {
+        "stations": [
+            {
+                "station_id": s.station_id,
+                "name": s.name,
+                "walk_minutes": s.walk_minutes,
+                "items": [
+                    {"name": i.name, "price": i.price, "description": i.description}
+                    for i in s.items
+                ],
+            }
+            for s in stations
+        ]
+    }
+    result = generate_food_recommendation(menu_data)
+    return result
+
+
 @router.post("/order", response_model=OrderResponse)
 async def place_order(req: OrderRequest):
     """Place a new concession order and receive a pickup code."""

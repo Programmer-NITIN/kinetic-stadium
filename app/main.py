@@ -80,14 +80,14 @@ async def add_security_headers(request: Request, call_next) -> Response:
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
     response.headers["Permissions-Policy"] = (
-        "camera=(), microphone=(), geolocation=(self), payment=()"
+        "camera=(self), microphone=(self), geolocation=(self), payment=()"
     )
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maps.googleapis.com; "
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maps.googleapis.com https://cdn.tailwindcss.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; "
         "font-src 'self' https://fonts.gstatic.com data:; "
-        "img-src 'self' data: https://*.googleapis.com https://*.gstatic.com https://lh3.googleusercontent.com; "
+        "img-src 'self' data: https://*.googleapis.com https://*.gstatic.com https://lh3.googleusercontent.com https://api.qrserver.com; "
         "connect-src 'self' https://*.googleapis.com; "
         "frame-ancestors 'none'"
     )

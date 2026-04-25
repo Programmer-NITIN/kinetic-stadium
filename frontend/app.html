@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Stadium</title>
+    <meta name="description" content="Kinetic Stadium - AI-Powered Smart Venue Experience">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="brand">
+            <h1><span class="material-symbols-outlined">bolt</span> KINETIC STADIUM</h1>
+        </div>
+        
+        <ul class="nav-links">
+            <li class="nav-item">
+                <a class="nav-link active" data-target="view-dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-map">
+                    <span class="material-symbols-outlined">map</span>
+                    <span>Live Map</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-concessions">
+                    <span class="material-symbols-outlined">fastfood</span>
+                    <span>Express Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-target="view-feed">
+                    <span class="material-symbols-outlined">feed</span>
+                    <span>Fan Feed</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="ticket-stub">
+            <p class="text-muted" style="font-size: 0.8rem">YOUR TICKET</p>
+            <h3 class="mt-2">SEC 112 • ROW 14</h3>
+            <p style="font-size: 0.9rem" class="text-teal">Gate B</p>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Top App Bar -->
+        <header class="top-bar">
+            <div class="score-ticker" id="top-score-ticker">
+                <span class="live-badge">LIVE</span>
+                <span>KNT 84 - 76 AWY</span>
+                <span class="text-muted">| Q3 08:42</span>
+            </div>
+            <!-- Promotions Banner (Crowd-Shaping) -->
+            <div id="promo-banner" class="promo-banner" style="display:none;">
+                <span class="material-symbols-outlined" id="promo-icon">local_offer</span>
+                <span id="promo-text">Loading offers...</span>
+                <button class="promo-accept-btn" id="promo-accept-btn">Claim +50 KP</button>
+                <button class="promo-dismiss" onclick="document.getElementById('promo-banner').style.display='none'">✕</button>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Kinetic Points Wallet -->
+                <div id="kinetic-points-wallet" class="kinetic-wallet">
+                    <span class="material-symbols-outlined" style="color: var(--warning); font-size: 1.1rem;">stars</span>
+                    <span id="kinetic-points-count" style="font-family: var(--font-heading); font-weight: 700; color: var(--warning);">0</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">KP</span>
+                </div>
+                <span class="material-symbols-outlined" style="cursor:pointer">notifications</span>
+                <span class="material-symbols-outlined" style="cursor:pointer">account_circle</span>
+            </div>
+        </header>
+
+        <!-- View: Dashboard -->
+        <section id="view-dashboard" class="view-section active">
+            <h2>Welcome back, Fan!</h2>
+            <p class="text-muted mb-4">Here's your live event overview.</p>
+            
+            <div class="bento-grid">
+                <!-- AI Insights Panel -->
+                <div class="glass-panel" style="padding: 1.5rem; grid-column: 1 / -1; border-left: 3px solid #0066ff; background: linear-gradient(135deg, rgba(0,102,255,0.08), rgba(255,94,7,0.05));">
+                    <h3 class="mb-4 flex-between" style="color: #0066ff;">
+                        <span style="display:flex; align-items:center; gap: 0.5rem;"><span class="material-symbols-outlined">neurology</span> Gemini AI Insights</span>
+                        <span class="live-badge" style="font-size: 0.65rem;">LIVE</span>
+                    </h3>
+                    <div id="ai-insights-text" style="font-size: 0.95rem; line-height: 1.6; color: rgba(255,255,255,0.9);">
+                        <p style="opacity:0.5;">Analyzing stadium telemetry...</p>
+                    </div>
+                </div>
+
+                <!-- Ticket Card -->
+                <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+                    <h3 class="mb-4">Digital Ticket</h3>
+                    <div class="qr-container">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KineticStadiumTicket" alt="QR Code">
+                        <div class="qr-scanner"></div>
+                    </div>
+                    <p class="mt-2 text-muted">Ready for scanning</p>
+                </div>
+
+                <!-- Venue Pulse -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Venue Pulse <span class="material-symbols-outlined text-orange">sensors</span></h3>
+                    <div id="dashboard-crowd-stats">
+                        <p>Loading real-time crowd data...</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-map]').click()">
+                            Find my seat <span class="material-symbols-outlined">my_location</span>
+                        </button>
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-concessions]').click()">
+                            Order food <span class="material-symbols-outlined">restaurant</span>
+                        </button>
+                        <button class="btn btn-outline flex-between" onclick="document.querySelector('[data-target=view-feed]').click()">
+                            View Replays <span class="material-symbols-outlined">replay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Live Map -->
+        <section id="view-map" class="view-section">
+            <h2 class="mb-4">Live Venue Map</h2>
+            
+            <div class="bento-grid" style="grid-template-columns: 1fr 2fr;">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4">Navigate</h3>
+                    <form id="route-form">
+                        <div class="mb-4">
+                            <label class="text-muted">From</label>
+                            <select id="origin" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; text-align: left;">
+                                <option value="Gate A">Gate A</option>
+                                <option value="Gate B">Gate B</option>
+                                <option value="Section 110">Section 110</option>
+                                <option value="Food Court">Food Court</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted">To</label>
+                            <select id="destination" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem; text-align: left;">
+                                <option value="Section 110">Section 110</option>
+                                <option value="Food Court">Food Court</option>
+                                <option value="Restroom 1">Restroom 1</option>
+                                <option value="Gate A">Gate A</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted">Accessibility</label>
+                            <div style="margin-top: 0.5rem;">
+                                <input type="checkbox" id="accessible"> Require accessible route
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Find Fastest Route</button>
+                    </form>
+
+                    <div id="route-results" class="mt-4" style="display:none;">
+                        <h4 class="text-teal mb-2">Route Summary</h4>
+                        <p id="route-distance"></p>
+                        <p id="route-time"></p>
+                        <p id="route-reason" class="text-muted mt-2" style="font-size:0.9rem; border-left:2px solid var(--accent-orange); padding-left:10px;"></p>
+                    </div>
+
+                    <!-- AR View Button -->
+                    <button class="btn mt-4" style="width: 100%; background: linear-gradient(135deg, var(--accent-teal), var(--primary-blue));" id="ar-view-btn">
+                        <span class="material-symbols-outlined" style="vertical-align: middle;">view_in_ar</span> Launch AR Wayfinding
+                    </button>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height: 400px;" id="map-container">
+                    <!-- SVG map injected here -->
+                    <!-- Heatmap legend -->
+                    <div id="heatmap-legend" class="heatmap-legend" style="display:none;">
+                        <span style="font-size:0.75rem" class="text-muted">Density:</span>
+                        <span class="legend-dot" style="background:#22c55e;"></span><span style="font-size:0.7rem">Low</span>
+                        <span class="legend-dot" style="background:#f59e0b;"></span><span style="font-size:0.7rem">Med</span>
+                        <span class="legend-dot" style="background:#ef4444;"></span><span style="font-size:0.7rem">High</span>
+                        <span class="legend-dot" style="background:#dc2626; box-shadow: 0 0 8px #dc2626;"></span><span style="font-size:0.7rem">Critical</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Express Concessions -->
+        <section id="view-concessions" class="view-section">
+            <div class="flex-between mb-4">
+                <h2>Express Orders</h2>
+                <div class="glass-panel" style="padding: 0.5rem 1rem; color: var(--warning)">
+                    <span class="material-symbols-outlined" style="vertical-align: middle;">timer</span> 
+                    <span id="global-prep-time">Loading...</span>
+                </div>
+            </div>
+
+            <!-- AI Food Recommendation -->
+            <div id="ai-food-rec" class="glass-panel mb-4" style="padding: 1.25rem; border-left: 3px solid #ff5e07; background: linear-gradient(135deg, rgba(255,94,7,0.08), rgba(0,102,255,0.05)); display:none;">
+                <h4 style="display:flex; align-items:center; gap: 0.5rem; color: #ff5e07; margin-bottom: 0.75rem;">
+                    <span class="material-symbols-outlined">restaurant</span> AI Chef's Pick
+                    <span style="font-size:0.65rem; background: rgba(255,94,7,0.2); padding: 2px 8px; border-radius: 10px; color: #ff5e07;">Powered by Gemini</span>
+                </h4>
+                <p id="ai-food-rec-text" style="font-size: 0.9rem; line-height: 1.5;">Loading recommendation...</p>
+            </div>
+
+            <div class="bento-grid" style="grid-template-columns: 2fr 1fr;">
+                <div>
+                    <div id="menu-container">
+                        <!-- Menu items injected here via JS -->
+                        <p>Loading menu...</p>
+                    </div>
+                </div>
+                
+                <div class="glass-panel" style="padding: 1.5rem; position: sticky; top: 100px; height: fit-content;">
+                    <h3 class="mb-4">Your Cart</h3>
+                    <div id="cart-items" class="mb-4">
+                        <p class="text-muted">Cart is empty.</p>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-glass); padding-top: 1rem;" class="mb-4">
+                        <div class="flex-between"><span>Subtotal:</span> <span id="cart-subtotal">$0.00</span></div>
+                        <div class="flex-between text-muted"><span>Tax:</span> <span id="cart-tax">$0.00</span></div>
+                        <div class="flex-between mt-2"><strong style="font-size: 1.2rem">Total:</strong> <strong style="font-size: 1.2rem" id="cart-total" class="text-teal">$0.00</strong></div>
+                    </div>
+
+                    <!-- Walk-Through Pickup Toggle -->
+                    <div class="walkthrough-toggle mb-4">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="walkthrough-toggle">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">
+                                <span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">bluetooth</span>
+                                Walk-Through Pickup
+                            </span>
+                        </label>
+                        <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">Auto-handoff when you approach the counter</p>
+                    </div>
+
+                    <button class="btn" style="width: 100%;" id="checkout-btn" disabled>Place Order</button>
+
+                    <div id="order-status-panel" class="mt-4" style="display:none; background: rgba(0,219,233,0.1); padding: 1rem; border-radius: 8px;">
+                        <h4 class="text-teal mb-2" id="order-status-title">Order Confirmed</h4>
+                        <h2 class="mb-2" id="order-pickup-code"></h2>
+                        <p id="order-status-msg" class="text-muted"></p>
+                        <!-- Proximity progress bar for walk-through -->
+                        <div id="proximity-tracker" style="display:none;" class="mt-4">
+                            <div class="flex-between mb-2">
+                                <span class="text-muted" style="font-size: 0.8rem;">Proximity to counter</span>
+                                <span id="proximity-distance" class="text-teal" style="font-size: 0.8rem;">~50m</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill proximity-fill" id="proximity-bar" style="width: 0%; background: linear-gradient(90deg, var(--accent-teal), var(--success));"></div>
+                            </div>
+                            <p class="text-muted mt-2" style="font-size: 0.75rem;" id="proximity-status">Approaching counter...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Fan Feed -->
+        <section id="view-feed" class="view-section">
+            <div class="flex-between mb-4">
+                <h2>Fan Feed</h2>
+                <button class="btn" id="simulate-match-end-btn" style="background: linear-gradient(135deg, var(--accent-orange), var(--danger));">
+                    <span class="material-symbols-outlined" style="vertical-align: middle;">sports_score</span> Simulate Match End
+                </button>
+            </div>
+            <div class="bento-grid">
+                
+                <!-- Match Centre -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Match Centre <span class="live-badge">LIVE</span></h3>
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div class="flex-between" style="font-size: 2rem; font-family: var(--font-heading)">
+                            <span>KNT</span>
+                            <span class="text-orange" id="feed-score">84 - 76</span>
+                            <span>AWY</span>
+                        </div>
+                        <p class="text-muted" id="feed-clock">Q3 08:42</p>
+                    </div>
+                    <div id="feed-stats">
+                        <!-- Stats injected here -->
+                    </div>
+                </div>
+
+                <!-- Instant Replays -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Instant Replays <span class="material-symbols-outlined text-teal">slow_motion_video</span></h3>
+                    <div id="feed-replays" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Replays injected here -->
+                    </div>
+                </div>
+
+                <!-- Venue Buzz -->
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 class="mb-4 flex-between">Venue Buzz <span class="material-symbols-outlined text-primary">chat_bubble</span></h3>
+                    <div id="feed-buzz" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Buzz injected here -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- AR Wayfinding Modal -->
+    <div id="ar-modal" class="ar-modal" style="display:none;">
+        <div class="ar-header">
+            <h3><span class="material-symbols-outlined">view_in_ar</span> AR Wayfinding</h3>
+            <button class="btn" id="ar-close-btn" style="background: rgba(255,255,255,0.2); padding: 0.5rem;">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="ar-viewport">
+            <!-- Real camera feed via getUserMedia -->
+            <video id="ar-camera-feed" class="ar-camera-feed" autoplay playsinline muted></video>
+            <!-- Fallback gradient if camera unavailable -->
+            <div id="ar-camera-fallback" class="ar-camera-sim" style="display:none;"></div>
+            <!-- AR path arrows overlay -->
+            <div class="ar-path-overlay">
+                <div class="ar-arrow ar-arrow-1">
+                    <span class="material-symbols-outlined">arrow_upward</span>
+                    <span>25m ahead</span>
+                </div>
+                <div class="ar-arrow ar-arrow-2">
+                    <span class="material-symbols-outlined">turn_right</span>
+                    <span>Turn right at Corridor B</span>
+                </div>
+                <div class="ar-arrow ar-arrow-3">
+                    <span class="material-symbols-outlined">location_on</span>
+                    <span>Destination: 42m</span>
+                </div>
+            </div>
+            <!-- AR floor path -->
+            <svg class="ar-floor-path" viewBox="0 0 400 300">
+                <defs>
+                    <linearGradient id="ar-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#00dbe9" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="#0066ff" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <filter id="ar-glow">
+                        <feGaussianBlur stdDeviation="4" result="blur"/>
+                        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                    </filter>
+                </defs>
+                <path d="M200,280 L200,180 Q200,140 240,140 L350,140" fill="none" stroke="url(#ar-grad)" stroke-width="6" stroke-dasharray="12,8" filter="url(#ar-glow)" class="ar-animated-path"/>
+                <circle cx="200" cy="280" r="8" fill="#00dbe9" class="ar-pulse-dot"/>
+                <circle cx="350" cy="140" r="10" fill="#22c55e" class="ar-dest-dot"/>
+            </svg>
+            <!-- AR HUD Info -->
+            <div class="ar-hud">
+                <div class="ar-hud-item">
+                    <span class="material-symbols-outlined">directions_walk</span>
+                    <span>ETA: 2 min</span>
+                </div>
+                <div class="ar-hud-item">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Low Crowd</span>
+                </div>
+                <div class="ar-hud-item ar-hud-destination">
+                    <span class="material-symbols-outlined">flag</span>
+                    <span id="ar-dest-label">Section 110</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Smart Egress Modal -->
+    <div id="egress-modal" class="egress-modal" style="display:none;">
+        <div class="egress-content glass-panel">
+            <div class="flex-between mb-4">
+                <h2 style="display:flex; align-items:center; gap: 0.5rem;">
+                    <span class="material-symbols-outlined text-orange">sports_score</span> Smart Exit Guide
+                </h2>
+                <button class="btn" id="egress-close-btn" style="background: rgba(255,255,255,0.2); padding: 0.5rem;">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="egress-recommendation" class="egress-recommendation mb-4">
+                <p>Loading egress data...</p>
+            </div>
+            <!-- AI Strategy Panel -->
+            <div id="egress-ai-strategy" class="glass-panel mb-4" style="padding: 1.25rem; border-left: 3px solid #0066ff; background: linear-gradient(135deg, rgba(0,102,255,0.1), rgba(0,219,233,0.05)); display:none;">
+                <h4 style="display:flex; align-items:center; gap: 0.5rem; color: #0066ff; margin-bottom: 0.75rem;">
+                    <span class="material-symbols-outlined">neurology</span> AI Exit Strategy
+                    <span style="font-size:0.65rem; background: rgba(0,102,255,0.2); padding: 2px 8px; border-radius: 10px; color: #b3c5ff;">Gemini</span>
+                </h4>
+                <p id="egress-ai-text" style="font-size: 0.95rem; line-height: 1.6;"></p>
+            </div>
+            <div id="egress-gates" class="egress-gates">
+                <!-- Gate cards injected here -->
+            </div>
+            <div id="egress-transport" class="mt-4">
+                <!-- Transport tips injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div id="chat-widget" class="collapsed glass-panel">
+        <div id="chat-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="material-symbols-outlined">robot_2</span>
+                <span style="font-weight: bold; font-family: var(--font-heading)">Kinetic Assistant</span>
+            </div>
+            <span class="material-symbols-outlined" id="chat-toggle-icon">expand_less</span>
+        </div>
+        <div id="chat-messages">
+            <div class="chat-msg msg-bot">
+                Hello! I'm your Kinetic Stadium AI assistant. Ask me anything about the venue, or tap the 🎤 mic to speak!
+            </div>
+        </div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Ask about the venue..." autocomplete="off">
+            <!-- Voice Concierge Mic Button -->
+            <button class="btn voice-btn" id="voice-btn" style="padding: 5px 10px; background: transparent; border: 1px solid var(--accent-teal); color: var(--accent-teal);" title="Hold to speak">
+                <span class="material-symbols-outlined">mic</span>
+            </button>
+            <button class="btn" id="chat-send" style="padding: 5px 10px;"><span class="material-symbols-outlined">send</span></button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Kinetic Points Toast -->
+<div id="kp-toast" class="kp-toast" style="display:none;">
+    <span class="material-symbols-outlined" style="color: var(--warning);">stars</span>
+    <span id="kp-toast-text">+50 Kinetic Points!</span>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

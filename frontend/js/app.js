@@ -95,36 +95,12 @@ const MOCK_DATA = {
 
 // ── API Helpers ────────────────────────────────────────────────────────────
 async function fetchAPI(endpoint, options = {}) {
-    try {
-        const res = await fetch(`/api${endpoint}`, options);
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
-        return await res.json();
-    } catch (err) {
-        console.warn(`Falling back to mock data for ${endpoint}`);
-        if (endpoint.includes('/crowd/status')) return MOCK_DATA.crowd;
-        if (endpoint.includes('/fan-feed/live')) return MOCK_DATA.fanFeed;
-        if (endpoint.includes('/concessions/menu')) return MOCK_DATA.concessions;
-        if (endpoint.includes('/concessions/order')) {
-            return {
-                order_id: "ORD-" + Date.now(),
-                pickup_code: "#K88",
-                message: "Order confirmed! Preparation starting shortly.",
-                status: "confirmed"
-            };
-        }
-        if (endpoint.includes('/navigation/route')) {
-            return {
-                distance_meters: 150,
-                estimated_time_minutes: 2,
-                routing_reason: "Avoiding North Concourse due to high density.",
-                path: [document.getElementById('origin').value, "Concourse B", document.getElementById('destination').value]
-            };
-        }
-        if (endpoint.includes('/assistant/chat')) {
-            return { response: "I'm your Kinetic AI Assistant. I operate offline during this demo mode, but I can tell you that the Food Court has medium wait times right now!" };
-        }
+    const res = await fetch(endpoint, options);
+    if (!res.ok) {
+        console.error(`API error: ${res.status} on ${endpoint}`);
         return null;
     }
+    return await res.json();
 }
 
 // ── 1. Dashboard Logic ─────────────────────────────────────────────────────
@@ -137,16 +113,17 @@ async function loadDashboard() {
 
     data.zones.forEach(zone => {
         let colorClass = 'text-primary';
-        if (zone.density_level === 'High') colorClass = 'text-danger';
-        if (zone.density_level === 'Medium') colorClass = 'text-warning';
+        if (zone.status === 'CRITICAL' || zone.status === 'HIGH') colorClass = 'text-danger';
+        else if (zone.status === 'MEDIUM') colorClass = 'text-warning';
+        else if (zone.status === 'LOW') colorClass = 'text-success';
 
-        const fillPct = (zone.current_occupancy / zone.capacity) * 100;
+        const fillPct = zone.density;
 
         container.innerHTML += `
             <div class="mb-4">
                 <div class="flex-between mb-2">
                     <span>${zone.name}</span>
-                    <span class="${colorClass}">${zone.density_level} (${Math.round(fillPct)}%)</span>
+                    <span class="${colorClass}">${zone.status} (${fillPct}%)</span>
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill" style="width: ${fillPct}%"></div>
@@ -154,6 +131,33 @@ async function loadDashboard() {
             </div>
         `;
     });
+}
+
+// ── AI Insights Loader ─────────────────────────────────────────────────────
+async function loadAIInsights() {
+    const container = document.getElementById('ai-insights-text');
+    if (!container) return;
+    try {
+        const data = await fetchAPI('/crowd/ai-insights');
+        if (data && data.narrative) {
+            container.innerHTML = '';
+            // Typing effect
+            const p = document.createElement('p');
+            container.appendChild(p);
+            const text = data.narrative;
+            let i = 0;
+            function typeChar() {
+                if (i < text.length) {
+                    p.textContent += text[i];
+                    i++;
+                    setTimeout(typeChar, 12);
+                }
+            }
+            typeChar();
+        }
+    } catch(e) {
+        console.warn('AI Insights unavailable:', e);
+    }
 }
 
 // ── 2. Fan Feed Logic ──────────────────────────────────────────────────────
@@ -287,6 +291,24 @@ async function loadConcessions() {
             </div>
         `;
     });
+
+    // Load AI food recommendation
+    loadFoodRecommendation();
+}
+
+async function loadFoodRecommendation() {
+    const panel = document.getElementById('ai-food-rec');
+    const textEl = document.getElementById('ai-food-rec-text');
+    if (!panel || !textEl) return;
+    try {
+        const data = await fetchAPI('/concessions/ai-recommend');
+        if (data && data.recommendation) {
+            textEl.textContent = data.recommendation;
+            panel.style.display = 'block';
+        }
+    } catch(e) {
+        console.warn('AI food recommendation unavailable:', e);
+    }
 }
 
 window.addToCart = function(stationId, itemId, name, price) {
@@ -370,40 +392,173 @@ if (checkoutBtn) {
             document.getElementById('order-pickup-code').textContent = res.pickup_code;
             document.getElementById('order-status-msg').textContent = res.message;
             
-            // Polling simulation
-            setTimeout(() => {
-                document.getElementById('order-status-msg').textContent = "Your order is READY! Pick up at station.";
-                panel.style.background = 'rgba(34, 197, 94, 0.2)'; // success green
-            }, 5000);
+            const walkToggle = document.getElementById('walkthrough-toggle');
+            if (walkToggle && walkToggle.checked) {
+                // Feature 4: Walk-Through Pickup Simulation
+                const tracker = document.getElementById('proximity-tracker');
+                const bar = document.getElementById('proximity-bar');
+                const distText = document.getElementById('proximity-distance');
+                const statusText = document.getElementById('proximity-status');
+                
+                tracker.style.display = 'block';
+                bar.style.width = '0%';
+                
+                let dist = 50;
+                const interval = setInterval(() => {
+                    dist -= 5;
+                    const pct = ((50 - dist) / 50) * 100;
+                    bar.style.width = `${pct}%`;
+                    distText.textContent = `~${dist}m`;
+                    
+                    if (dist <= 0) {
+                        clearInterval(interval);
+                        statusText.textContent = "Handoff Complete! Enjoy your order.";
+                        statusText.className = "text-success mt-2";
+                        document.getElementById('order-status-msg').textContent = "Automatically handed off via Bluetooth proximity.";
+                        panel.style.background = 'rgba(34, 197, 94, 0.2)';
+                    }
+                }, 800);
+            } else {
+                // Standard Polling simulation
+                setTimeout(() => {
+                    document.getElementById('order-status-msg').textContent = "Your order is READY! Pick up at station.";
+                    panel.style.background = 'rgba(34, 197, 94, 0.2)'; // success green
+                }, 5000);
+            }
         }
     });
 }
 
 // ── 4. Map & Navigation Logic ──────────────────────────────────────────────
+// Zone positions for heatmap (matching ZONE_REGISTRY from backend)
+const ZONE_MAP_COORDS = {
+    'GA': { cx: 400, cy: 50,  rx: 60, ry: 25, label: 'Gate A' },
+    'GB': { cx: 650, cy: 300, rx: 25, ry: 60, label: 'Gate B' },
+    'GC': { cx: 400, cy: 550, rx: 60, ry: 25, label: 'Gate C' },
+    'GD': { cx: 100, cy: 300, rx: 25, ry: 60, label: 'Gate D' },
+    'FC': { cx: 150, cy: 150, rx: 45, ry: 30, label: 'Food Court' },
+    'ST': { cx: 400, cy: 300, rx: 120, ry: 80, label: 'Stadium Bowl' },
+    'RR': { cx: 650, cy: 150, rx: 35, ry: 25, label: 'Restrooms' },
+    'MC': { cx: 700, cy: 200, rx: 30, ry: 20, label: 'Medical' },
+    'MS': { cx: 130, cy: 450, rx: 40, ry: 25, label: 'Merch Store' },
+    'C1': { cx: 550, cy: 150, rx: 50, ry: 20, label: 'Corridor 1' },
+    'C2': { cx: 300, cy: 200, rx: 20, ry: 50, label: 'Corridor 2' },
+    'C3': { cx: 600, cy: 400, rx: 50, ry: 20, label: 'Corridor 3' },
+    'C4': { cx: 200, cy: 400, rx: 50, ry: 20, label: 'Corridor 4' },
+};
+
+function densityToColor(density) {
+    if (density >= 80) return 'rgba(220, 38, 38, 0.6)';  // CRITICAL - red
+    if (density >= 60) return 'rgba(239, 68, 68, 0.45)'; // HIGH - orange-red
+    if (density >= 35) return 'rgba(245, 158, 11, 0.35)'; // MEDIUM - amber
+    return 'rgba(34, 197, 94, 0.25)';                     // LOW - green
+}
+
 function initMap() {
     const container = document.getElementById('map-container');
-    if (!container || container.innerHTML.includes('svg')) return; 
+    if (!container || container.querySelector('#route-svg')) return;
 
-    container.innerHTML = `
-        <svg id="route-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="5" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-            </defs>
-            <!-- Pitch -->
-            <rect x="250" y="200" width="300" height="200" rx="20" fill="rgba(34, 197, 94, 0.1)" stroke="var(--border-glass)" />
-            <!-- Stands -->
-            <path d="M150,100 Q400,0 650,100 L600,180 Q400,100 200,180 Z" fill="rgba(255,255,255,0.05)" stroke="var(--border-glass)" />
-            <path d="M150,500 Q400,600 650,500 L600,420 Q400,500 200,420 Z" fill="rgba(255,255,255,0.05)" stroke="var(--border-glass)" />
-            <path d="M100,150 Q0,300 100,450 L180,400 Q100,300 180,200 Z" fill="rgba(255,255,255,0.05)" stroke="var(--border-glass)" />
-            <path d="M700,150 Q800,300 700,450 L620,400 Q700,300 620,200 Z" fill="rgba(255,255,255,0.05)" stroke="var(--border-glass)" />
-            
-            <g id="map-nodes"></g>
-            <g id="map-path"></g>
-        </svg>
+    // Build heatmap zone ellipses
+    let heatmapZones = '';
+    let heatmapLabels = '';
+    for (const [zoneId, z] of Object.entries(ZONE_MAP_COORDS)) {
+        heatmapZones += `<ellipse id="hz-${zoneId}" class="heatmap-zone" cx="${z.cx}" cy="${z.cy}" rx="${z.rx}" ry="${z.ry}" fill="rgba(255,255,255,0.05)" stroke="none"/>`;
+        heatmapLabels += `<text x="${z.cx}" y="${z.cy + 4}" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle" font-family="var(--font-body)" font-weight="500">${z.label}</text>`;
+    }
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('id', 'route-svg');
+    svg.setAttribute('viewBox', '0 0 800 600');
+    svg.style.width = '100%';
+    svg.style.maxHeight = '600px';
+    svg.innerHTML = `
+        <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <radialGradient id="pitch-gradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(34,197,94,0.15)" />
+                <stop offset="100%" stop-color="rgba(34,197,94,0.02)" />
+            </radialGradient>
+            <linearGradient id="corridor-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.03)" />
+                <stop offset="50%" stop-color="rgba(255,255,255,0.08)" />
+                <stop offset="100%" stop-color="rgba(255,255,255,0.03)" />
+            </linearGradient>
+        </defs>
+
+        <!-- Stadium outer ring -->
+        <ellipse cx="400" cy="300" rx="360" ry="260" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+        <ellipse cx="400" cy="300" rx="340" ry="240" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+
+        <!-- Seating sections (arc segments) -->
+        <path d="M 400 60 A 340 240 0 0 1 740 300" fill="none" stroke="rgba(0,102,255,0.15)" stroke-width="18" />
+        <path d="M 740 300 A 340 240 0 0 1 400 540" fill="none" stroke="rgba(255,94,7,0.15)" stroke-width="18" />
+        <path d="M 400 540 A 340 240 0 0 1 60 300" fill="none" stroke="rgba(0,219,233,0.12)" stroke-width="18" />
+        <path d="M 60 300 A 340 240 0 0 1 400 60" fill="none" stroke="rgba(180,130,255,0.12)" stroke-width="18" />
+
+        <!-- Corridors (connecting paths) -->
+        <line x1="400" y1="80" x2="400" y2="220" stroke="url(#corridor-grad)" stroke-width="8" stroke-linecap="round" />
+        <line x1="580" y1="160" x2="520" y2="230" stroke="url(#corridor-grad)" stroke-width="8" stroke-linecap="round" />
+        <line x1="300" y1="220" x2="300" y2="380" stroke="url(#corridor-grad)" stroke-width="6" stroke-linecap="round" />
+        <line x1="580" y1="380" x2="520" y2="350" stroke="url(#corridor-grad)" stroke-width="6" stroke-linecap="round" />
+        <line x1="200" y1="380" x2="280" y2="350" stroke="url(#corridor-grad)" stroke-width="6" stroke-linecap="round" />
+        <line x1="650" y1="300" x2="520" y2="300" stroke="url(#corridor-grad)" stroke-width="6" stroke-linecap="round" />
+        <line x1="100" y1="300" x2="280" y2="300" stroke="url(#corridor-grad)" stroke-width="6" stroke-linecap="round" />
+        <line x1="400" y1="380" x2="400" y2="540" stroke="url(#corridor-grad)" stroke-width="8" stroke-linecap="round" />
+
+        <!-- Pitch / Playing field -->
+        <rect x="280" y="230" width="240" height="140" rx="15" fill="url(#pitch-gradient)" stroke="rgba(34,197,94,0.35)" stroke-width="1.5" />
+        <line x1="400" y1="230" x2="400" y2="370" stroke="rgba(34,197,94,0.2)" stroke-width="1" />
+        <circle cx="400" cy="300" r="30" fill="none" stroke="rgba(34,197,94,0.2)" stroke-width="1" />
+        <text x="400" y="305" fill="rgba(34,197,94,0.5)" font-size="11" text-anchor="middle" font-family="var(--font-heading)">PITCH</text>
+
+        <!-- Heatmap zone ellipses -->
+        <g id="heatmap-zones">${heatmapZones}</g>
+
+        <!-- Gate icons -->
+        <rect x="375" y="35" width="50" height="20" rx="4" fill="rgba(0,102,255,0.15)" stroke="rgba(0,102,255,0.4)" stroke-width="1" />
+        <rect x="635" y="290" width="20" height="50" rx="4" fill="rgba(0,102,255,0.15)" stroke="rgba(0,102,255,0.4)" stroke-width="1" />
+        <rect x="375" y="540" width="50" height="20" rx="4" fill="rgba(0,102,255,0.15)" stroke="rgba(0,102,255,0.4)" stroke-width="1" />
+        <rect x="85" y="275" width="20" height="50" rx="4" fill="rgba(0,102,255,0.15)" stroke="rgba(0,102,255,0.4)" stroke-width="1" />
+
+        <!-- Amenity icons -->
+        <rect x="120" y="130" width="55" height="35" rx="6" fill="rgba(255,94,7,0.1)" stroke="rgba(255,94,7,0.3)" stroke-width="1" stroke-dasharray="3,2" />
+        <rect x="625" y="130" width="50" height="35" rx="6" fill="rgba(0,219,233,0.1)" stroke="rgba(0,219,233,0.3)" stroke-width="1" stroke-dasharray="3,2" />
+        <rect x="100" y="430" width="55" height="35" rx="6" fill="rgba(180,130,255,0.1)" stroke="rgba(180,130,255,0.3)" stroke-width="1" stroke-dasharray="3,2" />
+
+        <!-- Zone labels -->
+        <g id="zone-labels">${heatmapLabels}</g>
+        <g id="map-nodes"></g>
+        <g id="map-path"></g>
     `;
+    container.insertBefore(svg, container.querySelector('.heatmap-legend'));
+
+    // Start heatmap polling
+    updateHeatmap();
+    setInterval(updateHeatmap, 5000);
+}
+
+async function updateHeatmap() {
+    const data = await fetchAPI('/crowd/status');
+    if (!data || !data.zones) return;
+
+    const legend = document.getElementById('heatmap-legend');
+    if (legend) legend.style.display = 'flex';
+
+    data.zones.forEach(zone => {
+        const el = document.getElementById(`hz-${zone.zone_id}`);
+        if (!el) return;
+        const color = densityToColor(zone.density);
+        el.setAttribute('fill', color);
+        // Pulse critical zones
+        if (zone.density >= 80) {
+            el.style.animation = 'heatmapPulse 2s ease infinite';
+        } else {
+            el.style.animation = 'none';
+        }
+    });
 }
 
 const routeForm = document.getElementById('route-form');
@@ -458,6 +613,52 @@ function drawRouteOnMap(path) {
     svgPath.innerHTML = `<path d="${d}" fill="none" stroke="var(--primary-blue)" stroke-width="4" stroke-dasharray="8,8" filter="url(#glow)" />`;
 }
 
+// Feature 1: AR Wayfinding with REAL CAMERA
+const arBtn = document.getElementById('ar-view-btn');
+const arModal = document.getElementById('ar-modal');
+const arCloseBtn = document.getElementById('ar-close-btn');
+let arStream = null;
+
+async function startARCamera() {
+    const video = document.getElementById('ar-camera-feed');
+    const fallback = document.getElementById('ar-camera-fallback');
+    try {
+        arStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        video.srcObject = arStream;
+        video.style.display = 'block';
+        if (fallback) fallback.style.display = 'none';
+    } catch (err) {
+        console.warn('Camera not available, using fallback:', err.message);
+        video.style.display = 'none';
+        if (fallback) fallback.style.display = 'block';
+    }
+}
+
+function stopARCamera() {
+    if (arStream) {
+        arStream.getTracks().forEach(track => track.stop());
+        arStream = null;
+    }
+    const video = document.getElementById('ar-camera-feed');
+    if (video) video.srcObject = null;
+}
+
+if (arBtn) {
+    arBtn.addEventListener('click', async () => {
+        arModal.style.display = 'flex';
+        document.getElementById('ar-dest-label').textContent = document.getElementById('destination').value || 'Destination';
+        await startARCamera();
+    });
+}
+if (arCloseBtn) {
+    arCloseBtn.addEventListener('click', () => {
+        arModal.style.display = 'none';
+        stopARCamera();
+    });
+}
+
 // ── 5. Chat Assistant Logic ────────────────────────────────────────────────
 const chatHeader = document.getElementById('chat-header');
 const chatWidget = document.getElementById('chat-widget');
@@ -494,10 +695,16 @@ async function sendChatMessage() {
         body: JSON.stringify({ message: msg, user_id: 'user-123' })
     });
 
-    if (res && res.response) {
+    if (res && res.reply) {
+        appendChatMsg(res.reply, 'bot');
+        speakText(res.reply);
+    } else if (res && res.response) {
         appendChatMsg(res.response, 'bot');
+        speakText(res.response);
     } else {
-        appendChatMsg("Sorry, I'm having trouble connecting right now.", 'bot');
+        const errStr = "Sorry, I'm having trouble connecting right now.";
+        appendChatMsg(errStr, 'bot');
+        speakText(errStr);
     }
 }
 
@@ -508,14 +715,190 @@ function appendChatMsg(text, sender) {
     container.scrollTop = container.scrollHeight;
 }
 
+// Feature 3: Voice Concierge
+let voiceEnabled = false;
+const voiceBtn = document.getElementById('voice-btn');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+
+if (SpeechRecognition && voiceBtn) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = function() {
+        voiceBtn.classList.add('listening');
+        voiceEnabled = true;
+    };
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('chat-input');
+        if (input) input.value = transcript;
+        sendChatMessage();
+    };
+
+    recognition.onerror = function() {
+        voiceBtn.classList.remove('listening');
+    };
+
+    recognition.onend = function() {
+        voiceBtn.classList.remove('listening');
+    };
+
+    voiceBtn.addEventListener('click', () => {
+        if (voiceBtn.classList.contains('listening')) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    });
+}
+
+function speakText(text) {
+    if (!voiceEnabled || !window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    // try to find a natural sounding voice
+    const voices = window.speechSynthesis.getVoices();
+    const goodVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Natural')) || voices[0];
+    if (goodVoice) utterance.voice = goodVoice;
+    window.speechSynthesis.speak(utterance);
+    voiceEnabled = false; // Reset after speaking so we don't speak normal text replies
+}
+
+// Feature 1: Crowd-Shaping Promotions
+async function loadPromotions() {
+    const data = await fetchAPI('/crowd/promotions');
+    if (!data || !data.promotions || data.promotions.length === 0) return;
+    
+    const banner = document.getElementById('promo-banner');
+    const icon = document.getElementById('promo-icon');
+    const text = document.getElementById('promo-text');
+    
+    if (banner && icon && text) {
+        const promo = data.promotions[0];
+        icon.textContent = promo.icon;
+        text.innerHTML = `<strong>${promo.headline}</strong> — ${promo.detail}`;
+        banner.style.display = 'flex';
+    }
+}
+
+// Feature 4: Kinetic Points Gamification
+let kineticPoints = 0;
+
+function awardKineticPoints(amount, reason) {
+    kineticPoints += amount;
+    // Update wallet display
+    const counter = document.getElementById('kinetic-points-count');
+    if (counter) {
+        counter.textContent = kineticPoints;
+        const wallet = document.getElementById('kinetic-points-wallet');
+        if (wallet) {
+            wallet.classList.remove('kp-bump');
+            void wallet.offsetWidth; // force reflow
+            wallet.classList.add('kp-bump');
+        }
+    }
+    // Show toast
+    const toast = document.getElementById('kp-toast');
+    const toastText = document.getElementById('kp-toast-text');
+    if (toast && toastText) {
+        toastText.textContent = `+${amount} KP — ${reason}`;
+        toast.style.display = 'flex';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+}
+
+// Hook: Accept promo → earn points
+const promoAcceptBtn = document.getElementById('promo-accept-btn');
+if (promoAcceptBtn) {
+    promoAcceptBtn.addEventListener('click', () => {
+        awardKineticPoints(50, 'Accepted crowd-shaping offer!');
+        document.getElementById('promo-banner').style.display = 'none';
+    });
+}
+
+// Feature 5: Smart Egress Alerts
+const simulateEgressBtn = document.getElementById('simulate-match-end-btn');
+const egressModal = document.getElementById('egress-modal');
+const egressCloseBtn = document.getElementById('egress-close-btn');
+
+if (simulateEgressBtn) {
+    simulateEgressBtn.addEventListener('click', async () => {
+        const data = await fetchAPI('/crowd/egress');
+        if (!data) return;
+        
+        const recDiv = document.getElementById('egress-recommendation');
+        recDiv.innerHTML = `
+            <h3>${data.recommendation.best_gate} is the fastest exit</h3>
+            <p>${data.recommendation.advice}</p>
+        `;
+        
+        const gatesDiv = document.getElementById('egress-gates');
+        gatesDiv.innerHTML = '';
+        data.gates.forEach(g => {
+            const isBest = g.gate_name === data.recommendation.best_gate ? 'best-gate' : '';
+            gatesDiv.innerHTML += `
+                <div class="egress-gate-card ${isBest}">
+                    <h4>${g.gate_name}</h4>
+                    <div class="egress-wait ${isBest ? 'text-success' : 'text-orange'}">${g.exit_wait_now_minutes}</div>
+                    <p class="text-muted" style="font-size:0.8rem">min wait</p>
+                </div>
+            `;
+        });
+        
+        const transDiv = document.getElementById('egress-transport');
+        transDiv.innerHTML = '<h4><span class="material-symbols-outlined">directions_car</span> Transport Updates</h4>';
+        if (data.gates.length > 0) {
+            const t = data.gates[0].transport_tips;
+            transDiv.innerHTML += `
+                <div class="transport-option"><span class="material-symbols-outlined">train</span> ${t.transit}</div>
+                <div class="transport-option"><span class="material-symbols-outlined">local_taxi</span> ${t.rideshare}</div>
+                <div class="transport-option"><span class="material-symbols-outlined">directions_car</span> ${t.car}</div>
+            `;
+        }
+        
+        // AI Strategy
+        const aiPanel = document.getElementById('egress-ai-strategy');
+        const aiText = document.getElementById('egress-ai-text');
+        if (aiPanel && aiText && data.ai_strategy) {
+            aiText.textContent = data.ai_strategy;
+            aiPanel.style.display = 'block';
+        }
+        
+        egressModal.style.display = 'flex';
+        // Award points for using smart egress
+        awardKineticPoints(25, 'Used Smart Exit Guide!');
+    });
+}
+
+if (egressCloseBtn) {
+    egressCloseBtn.addEventListener('click', () => {
+        egressModal.style.display = 'none';
+    });
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
 // Load data on startup
 setTimeout(() => {
     loadDashboard();
     loadFanFeed(); 
     loadConcessions();
+    loadPromotions();
+    loadAIInsights();
+    // Award welcome points
+    awardKineticPoints(100, 'Welcome to Kinetic Stadium!');
 }, 500);
 
 setInterval(() => {
     loadDashboard();
 }, 15000); 
+
+setInterval(() => {
+    loadPromotions();
+}, 30000);
+
+// Refresh AI insights every 20 seconds
+setInterval(() => {
+    loadAIInsights();
+}, 20000);
